@@ -23,8 +23,9 @@ import {
     CheckCircle2,
     Sparkles
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
+import { useAuth } from '@/context/AuthContext'
 
 /**
  * Composant principal de la page de présentation
@@ -33,6 +34,8 @@ const PresentationPage = () => {
     // État du menu latéral
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
+    const { user, logout } = useAuth()
+    const navigate = useNavigate()
 
     // Détection du scroll pour l'effet du header
     useEffect(() => {
@@ -130,13 +133,41 @@ const PresentationPage = () => {
         }
     ]
 
-    // Liens de navigation
-    const navLinks = [
-        { name: "Accueil", href: "/" },
-        { name: "S'entraîner", href: "/training" },
-        { name: "Compte", href: "/account" },
-        { name: "Nous contacter", href: "/contact" }
-    ]
+    // Liens de navigation dynamiques
+    const getNavLinks = () => {
+        const links = [{ name: "Accueil", href: "/" }];
+
+        if (user) {
+            links.push({ name: "Mon Compte", href: "/account" });
+
+            if (user.role === 'STUDENT' || user.role === 'ADMIN') {
+                links.push({ name: "S'entraîner", href: "/training" });
+                links.push({ name: "Veille Médicale", href: "/medical-watch" });
+            }
+
+            if (user.role === 'PROF' || user.role === 'ADMIN') {
+                links.push({ name: "Création d'entraînement", href: "/create-training" });
+            }
+
+            if (user.role === 'ADMIN') {
+                links.push({ name: "Gestion Utilisateurs", href: "/admin/users" });
+            }
+        } else {
+            links.push({ name: "Connexion", href: "/login" });
+            links.push({ name: "Inscription", href: "/register" });
+        }
+
+        links.push({ name: "Nous contacter", href: "/contact" });
+        return links;
+    };
+
+    const navLinks = getNavLinks();
+
+    const handleLogout = () => {
+        logout();
+        setIsMenuOpen(false);
+        navigate('/');
+    };
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -193,6 +224,15 @@ const PresentationPage = () => {
                                         <span className="font-medium">{link.name}</span>
                                     </Link>
                                 ))}
+                                {user && (
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center gap-3 px-6 py-3 text-red-600 hover:bg-red-50 transition-all text-left"
+                                    >
+                                        <ChevronRight className="w-4 h-4" />
+                                        <span className="font-medium">Déconnexion</span>
+                                    </button>
+                                )}
                             </div>
 
                             {/* Pied du menu */}
