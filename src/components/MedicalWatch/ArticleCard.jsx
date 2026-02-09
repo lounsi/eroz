@@ -45,7 +45,7 @@ const ArticleCard = ({ article, index = 0, featured = false }) => {
                 className="group relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500"
             >
                 {/* Gradient overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${categoryInfo?.gradient || 'from-medical-500 to-accent-500'} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${categoryInfo?.gradient || 'from-medical-500 to-accent-500'} opacity-0 group-hover:opacity-5 transition-opacity duration-500 pointer-events-none`} />
 
                 {/* Badge catégorie */}
                 <div className="absolute top-4 left-4 z-10">

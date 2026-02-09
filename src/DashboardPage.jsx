@@ -15,7 +15,7 @@ import {
 import Button from '@/components/ui/Button'
 
 /**
- * Page Dashboard - Mon Compte
+ * Page Ma Progression (Dashboard)
  * Données entièrement mockées pour la démo
  */
 const DashboardPage = () => {
@@ -198,7 +198,7 @@ const DashboardPage = () => {
                                     </div>
                                     <div className="text-right">
                                         <span className={`font-bold text-sm ${item.score >= 80 ? 'text-green-600' :
-                                                item.score >= 50 ? 'text-orange-500' : 'text-red-500'
+                                            item.score >= 50 ? 'text-orange-500' : 'text-red-500'
                                             }`}>
                                             {item.score}%
                                         </span>

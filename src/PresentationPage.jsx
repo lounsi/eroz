@@ -20,7 +20,9 @@ import {
     Sparkles,
     Server,
     Mouse,
-    ArrowDown
+    ArrowDown,
+    LogOut,
+    MessageSquare
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import Button from '@/components/ui/Button'
@@ -112,17 +114,20 @@ const PresentationPage = () => {
     const getNavLinks = () => {
         const links = [{ name: "Accueil", href: "/" }];
         if (user) {
-            links.push({ name: "Mon Compte", href: "/account" });
             if (user.role === 'STUDENT' || user.role === 'ADMIN') {
-                links.push({ name: "S'entraîner", href: "/training" });
                 links.push({ name: "Veille Médicale", href: "/medical-watch" });
+                links.push({ name: "S'entraîner", href: "/training" });
             }
-            if (user.role === 'PROF' || user.role === 'ADMIN') links.push({ name: "Création d'entraînement", href: "/create-training" });
-            if (user.role === 'ADMIN') links.push({ name: "Gestion Utilisateurs", href: "/admin/users" });
+            links.push({ name: "Progression", href: "/account" });
+            if (user.role === 'PROF' || user.role === 'ADMIN') {
+                links.push({ name: "Création d'entraînement", href: "/create-training" });
+            }
+            if (user.role === 'ADMIN') {
+                links.push({ name: "Gestion Utilisateurs", href: "/admin/users" });
+            }
         } else {
             links.push({ name: "Connexion", href: "/login" }, { name: "Inscription", href: "/register" });
         }
-        links.push({ name: "Nous contacter", href: "/contact" });
         return links;
     };
 
@@ -165,17 +170,43 @@ const PresentationPage = () => {
                                 <div className="flex items-center gap-3"><img src="/assets/logo-eroz.png" alt="Logo" className="w-10 h-10 object-contain" /><span className="font-bold text-xl text-slate-800">Éroz</span></div>
                                 <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-lg hover:bg-slate-100 transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
                             </div>
-                            <div className="flex-1 py-6">
-                                {navLinks.map((link) => (
-                                    <Link key={link.name} to={link.href} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-medical-600 hover:bg-medical-50 transition-all">
-                                        <ChevronRight className="w-4 h-4 opacity-50" /><span className="font-medium">{link.name}</span>
-                                    </Link>
-                                ))}
-                                {user && (
-                                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-6 py-3 text-red-600 hover:bg-red-50 transition-all text-left font-medium">
-                                        <ChevronRight className="w-4 h-4 opacity-50" /><span>Déconnexion</span>
-                                    </button>
-                                )}
+                            <div className="flex-1 py-6 flex flex-col justify-between">
+                                {/* Liens Principaux */}
+                                <div>
+                                    <div className="mb-4">
+                                        {navLinks.map((link) => (
+                                            <Link key={link.name} to={link.href} onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-medical-600 hover:bg-medical-50 transition-all font-medium">
+                                                <ChevronRight className="w-4 h-4 opacity-50" /><span>{link.name}</span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Section Bas de page : Contact + Déconnexion */}
+                                <div>
+                                    {/* Lien Contact - Au dessus de la barre */}
+                                    <div className="px-4 mb-3">
+                                        <Link
+                                            to="/contact"
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-600 hover:text-medical-600 transition-all border border-slate-100 group"
+                                        >
+                                            <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                <MessageSquare className="w-4 h-4 text-medical-500" />
+                                            </div>
+                                            <span className="font-semibold text-sm">Nous contacter</span>
+                                        </Link>
+                                    </div>
+
+                                    {/* Déconnexion - Avec barre de séparation */}
+                                    {user && (
+                                        <div className="border-t border-slate-100 pt-4 pb-6 mt-2">
+                                            <button onClick={handleLogout} className="w-full flex items-center gap-3 px-6 py-3 text-red-600 hover:bg-red-50 transition-all text-left font-medium">
+                                                <LogOut className="w-4 h-4 opacity-50" /><span>Déconnexion</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </motion.nav>
                     </>
