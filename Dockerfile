@@ -43,22 +43,45 @@ RUN echo 'server { \
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; \
     gzip_min_length 1000; \
     \
+    # Taille max upload \
+    client_max_body_size 10M; \
+    \
     # Cache des assets statiques \
     location /assets/ { \
-        expires 1y; \
-        add_header Cache-Control "public, immutable"; \
+    expires 1y; \
+    add_header Cache-Control "public, immutable"; \
+    } \
+    \
+    # Proxy API vers le Backend Node.js \
+    location /api/ { \
+    proxy_pass http://backend:3000; \
+    proxy_http_version 1.1; \
+    proxy_set_header Upgrade $http_upgrade; \
+    proxy_set_header Connection 'upgrade'; \
+    proxy_set_header Host $host; \
+    proxy_cache_bypass $http_upgrade; \
+    } \
+    \
+    # Proxy Uploads (Images) vers le Backend \
+    location /uploads/ { \
+    proxy_pass http://backend:3000; \
+    proxy_http_version 1.1; \
+    proxy_set_header Upgrade $http_upgrade; \
+    proxy_set_header Connection 'upgrade'; \
+    proxy_set_header Host $host; \
+    proxy_cache_bypass $http_upgrade; \
     } \
     \
     # Fallback pour le routing SPA \
     location / { \
-        try_files $uri $uri/ /index.html; \
+    try_files $uri $uri/ /index.html; \
     } \
     \
     # Headers de sécurité \
     add_header X-Frame-Options "SAMEORIGIN" always; \
     add_header X-Content-Type-Options "nosniff" always; \
     add_header X-XSS-Protection "1; mode=block" always; \
-}' > /etc/nginx/conf.d/default.conf
+    }' > /etc/nginx/conf.d/default.conf
 
 # Copier le build depuis le stage précédent
 COPY --from=builder /app/dist /usr/share/nginx/html

@@ -21,7 +21,11 @@ router.post('/', protect, async (req, res) => {
         const userId = req.user.id;
 
         // 1. Fetch User Context
-        const [userStats, recentSessions] = await Promise.all([
+        const [user, userStats, recentSessions] = await Promise.all([
+            prisma.user.findUnique({
+                where: { id: userId },
+                select: { firstName: true, lastName: true }
+            }),
             prisma.userStats.findUnique({ where: { userId } }),
             prisma.trainingSession.findMany({
                 where: { userId },
@@ -31,7 +35,7 @@ router.post('/', protect, async (req, res) => {
         ]);
 
         // 2. Build Expert Context System Prompt
-        const userName = `${req.user.firstName} ${req.user.lastName}`;
+        const userName = user ? `${user.firstName} ${user.lastName}` : 'Étudiant';
         const userLevel = userStats?.level || 1;
         const avgScore = userStats?.averageScore || 0;
 
