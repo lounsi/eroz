@@ -8,7 +8,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-    ArrowLeft,
     Newspaper,
     RefreshCw,
     TrendingUp,
@@ -22,6 +21,8 @@ import {
     AlertCircle,
     Loader2
 } from 'lucide-react';
+
+import GlobalNavigation from '@/components/GlobalNavigation';
 
 // Composants
 import ArticleCard from '@/components/MedicalWatch/ArticleCard';
@@ -195,13 +196,7 @@ const MedicalWatchPage = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="mb-8"
                     >
-                        <Link
-                            to="/"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-all backdrop-blur-sm"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            <span className="font-medium">Retour</span>
-                        </Link>
+                        <GlobalNavigation />
                     </motion.div>
 
                     {/* Header */}

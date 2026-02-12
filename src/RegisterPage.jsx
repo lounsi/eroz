@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import Button from './components/ui/Button';
 
 const RegisterPage = () => {
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { register } = useAuth();
@@ -13,7 +14,7 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const result = await register(name, email, password);
+        const result = await register(firstName, lastName, email, password);
         if (!result.success) {
             setError(result.message);
         }
@@ -36,20 +37,39 @@ const RegisterPage = () => {
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-slate-700">
-                                Nom complet
-                            </label>
-                            <div className="mt-1">
-                                <input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-medical-500 focus:border-medical-500 sm:text-sm"
-                                />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700">
+                                    Prénom
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        required
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-medical-500 focus:border-medical-500 sm:text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700">
+                                    Nom
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        id="lastName"
+                                        name="lastName"
+                                        type="text"
+                                        required
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-medical-500 focus:border-medical-500 sm:text-sm"
+                                    />
+                                </div>
                             </div>
                         </div>
 

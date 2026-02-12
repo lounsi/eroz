@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useForm, ValidationError } from '@formspree/react'
 import { ChevronLeft, Send, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import GlobalNavigation from '@/components/GlobalNavigation'
 import Button from '@/components/ui/Button'
 
 /**
@@ -60,10 +61,9 @@ const ContactPage = () => {
                     variants={fadeInUp}
                     className="mb-12"
                 >
-                    <Link to="/" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-8">
-                        <ChevronLeft className="w-5 h-5" />
-                        Retour à l'accueil
-                    </Link>
+                    <div className="mb-8">
+                        <GlobalNavigation />
+                    </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Nous contacter</h1>
                     <p className="text-xl text-slate-200 max-w-2xl">
                         Une question, une suggestion ou simplement envie d'échanger ?

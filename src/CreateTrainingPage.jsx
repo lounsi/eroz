@@ -1,13 +1,13 @@
-import { PlusCircle, ArrowLeft } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import GlobalNavigation from '@/components/GlobalNavigation';
 
 const CreateTrainingPage = () => {
     return (
         <div className="min-h-screen bg-slate-50 p-8">
-            <Link to="/" className="inline-flex items-center gap-2 text-slate-600 hover:text-medical-600 mb-8 transition-colors">
-                <ArrowLeft className="w-5 h-5" />
-                Retour à l'accueil
-            </Link>
+            <div className="mb-8">
+                <GlobalNavigation />
+            </div>
 
             <div className="max-w-4xl mx-auto">
                 <header className="mb-12">

@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret_dev_key_123';
 
 // Register
 router.post('/register', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
 
     try {
         const userExists = await prisma.user.findUnique({ where: { email } });
@@ -23,10 +23,18 @@ router.post('/register', async (req, res) => {
 
         const user = await prisma.user.create({
             data: {
-                name,
+                firstName,
+                lastName,
                 email,
                 password: hashedPassword,
                 role: 'STUDENT', // Default role
+            },
+        });
+
+        // Create empty stats for the new user
+        await prisma.userStats.create({
+            data: {
+                userId: user.id,
             },
         });
 
@@ -36,8 +44,10 @@ router.post('/register', async (req, res) => {
 
         res.status(201).json({
             id: user.id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
+            avatar: user.avatar,
             role: user.role,
             token,
         });
@@ -61,8 +71,10 @@ router.post('/login', async (req, res) => {
 
             res.json({
                 id: user.id,
-                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email,
+                avatar: user.avatar,
                 role: user.role,
                 token,
             });
@@ -80,7 +92,7 @@ router.get('/me', protect, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: req.user.id },
-            select: { id: true, name: true, email: true, role: true },
+            select: { id: true, firstName: true, lastName: true, email: true, avatar: true, role: true },
         });
         res.json(user);
     } catch (error) {

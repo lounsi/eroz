@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useChat } from './context/ChatContext'
 import {
-    ChevronLeft,
     Brain,
     Scan,
     Activity,
+    ChevronLeft,
     ZoomIn,
     ZoomOut,
     Sun,
@@ -16,14 +17,28 @@ import {
     RotateCcw
 } from 'lucide-react'
 import Button from '@/components/ui/Button'
+import GlobalNavigation from '@/components/GlobalNavigation'
+
 
 /**
  * Page S'entraîner - Simulation d'examen
  * Comprend 3 états : SELECTION -> EXAMEN -> RESULTAT
  */
 const TrainingPage = () => {
+    const { setChatVisibility } = useChat()
     // État principal : 'selection' | 'exam' | 'result'
     const [step, setStep] = useState('selection')
+
+    // Visibilité du Chatbot : caché pendant l'examen, visible sinon
+    useEffect(() => {
+        if (step === 'exam') {
+            setChatVisibility(false)
+        } else {
+            setChatVisibility(true)
+        }
+        // Cleanup : toujours réafficher en quittant la page
+        return () => setChatVisibility(true)
+    }, [step, setChatVisibility])
 
     // État de l'examen en cours
     const [selectedExam, setSelectedExam] = useState(null)
@@ -99,9 +114,7 @@ const TrainingPage = () => {
                 <div className="max-w-6xl mx-auto">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-12">
-                        <Link to="/" className="p-2 bg-white rounded-full shadow-sm hover:bg-slate-50 transition-colors">
-                            <ChevronLeft className="w-6 h-6 text-slate-600" />
-                        </Link>
+                        <GlobalNavigation />
                         <div>
                             <h1 className="text-3xl font-bold text-slate-800">S'entraîner</h1>
                             <p className="text-slate-500">Choisissez un cas clinique pour commencer la simulation.</p>
@@ -126,8 +139,8 @@ const TrainingPage = () => {
                                 {/* Badge Type */}
                                 <div className="absolute top-4 right-4">
                                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${exam.type === 'IRM' ? 'bg-purple-100 text-purple-600' :
-                                            exam.type === 'Scanner' ? 'bg-orange-100 text-orange-600' :
-                                                'bg-blue-100 text-blue-600'
+                                        exam.type === 'Scanner' ? 'bg-orange-100 text-orange-600' :
+                                            'bg-blue-100 text-blue-600'
                                         }`}>
                                         {exam.type}
                                     </span>
@@ -230,8 +243,8 @@ const TrainingPage = () => {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 className={`absolute w-6 h-6 -ml-3 -mt-3 border-2 rounded-full shadow-lg ${step === 'result'
-                                        ? (getScore() > 70 ? 'border-green-500 bg-green-500/20' : 'border-red-500 bg-red-500/20')
-                                        : 'border-medical-400 bg-medical-400/30'
+                                    ? (getScore() > 70 ? 'border-green-500 bg-green-500/20' : 'border-red-500 bg-red-500/20')
+                                    : 'border-medical-400 bg-medical-400/30'
                                     }`}
                                 style={{ top: `${userMarker.y}%`, left: `${userMarker.x}%` }}
                             >

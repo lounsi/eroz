@@ -10,11 +10,31 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-        setLoading(false);
+        const initAuth = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+
+                try {
+                    // Refresh user data from server
+                    // Note: client interceptor handles the token from localStorage
+                    const { data } = await client.get('/auth/me');
+                    const updatedUser = { ...data, token: parsedUser.token };
+                    localStorage.setItem('user', JSON.stringify(updatedUser)); // Persist key info
+                    setUser(updatedUser);
+                } catch (error) {
+                    console.error("Failed to refresh user data", error);
+                    if (error.response?.status === 401) {
+                        localStorage.removeItem('user');
+                        setUser(null);
+                    }
+                }
+            }
+            setLoading(false);
+        };
+
+        initAuth();
     }, []);
 
     const login = async (email, password) => {
@@ -35,9 +55,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password) => {
+    const register = async (firstName, lastName, email, password) => {
         try {
-            const { data } = await client.post('/auth/register', { name, email, password });
+            const { data } = await client.post('/auth/register', { firstName, lastName, email, password });
             localStorage.setItem('user', JSON.stringify(data));
             setUser(data);
             navigate('/medical-watch');
@@ -57,8 +77,14 @@ export const AuthProvider = ({ children }) => {
         navigate('/login');
     };
 
+    const updateUser = (userData) => {
+        const newUser = { ...user, ...userData };
+        localStorage.setItem('user', JSON.stringify(newUser));
+        setUser(newUser);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

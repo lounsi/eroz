@@ -22,6 +22,7 @@ Ce fichier vous explique comment lancer le projet complet (Backend + Frontend) s
    ```bash
    npm run dev
    ```
+
    > Le serveur démarrera sur **http://localhost:3000**
 
 ---
@@ -42,10 +43,27 @@ Ce fichier vous explique comment lancer le projet complet (Backend + Frontend) s
 
 ---
 
-## 🔑 Identifiants Administrateur
+## 🔑 Comptes de Test
 
-Pour accéder à toutes les fonctionnalités (Gestion utilisateurs, Création d'entraînements, etc.), connectez-vous avec ce compte :
-
-- **URL** : http://localhost:5173/login
+### Administrateur
 - **Email** : `admin@eroz.com`
 - **Mot de passe** : `admin123`
+
+### Étudiant (avec données de progression)
+- **Email** : `thomas.martin@edu.fr`
+- **Mot de passe** : `student123`
+
+### Professeur
+- **Email** : `prof@eroz.com`
+- **Mot de passe** : `prof123`
+
+---
+
+## 🔄 Recréer les Données de Test
+
+Si vous voulez réinitialiser la base de données avec les données de test :
+```bash
+cd backend
+npx prisma migrate reset --force
+npm run seed
+```

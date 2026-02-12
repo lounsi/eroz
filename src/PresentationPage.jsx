@@ -167,7 +167,27 @@ const PresentationPage = () => {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMenuOpen(false)} className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50" />
                         <motion.nav initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed left-0 top-0 bottom-0 w-72 bg-white shadow-2xl z-[60] flex flex-col">
                             <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                                <div className="flex items-center gap-3"><img src="/assets/logo-eroz.png" alt="Logo" className="w-10 h-10 object-contain" /><span className="font-bold text-xl text-slate-800">Éroz</span></div>
+                                <div className="flex items-center gap-3">
+                                    {user ? (
+                                        <>
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-medical-500 to-accent-500 flex items-center justify-center text-white font-bold overflow-hidden border-2 border-white shadow-sm">
+                                                {user.avatar ? (
+                                                    <img src={user.avatar} alt={user.firstName} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span>{user.firstName?.[0]}{user.lastName?.[0]}</span>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="font-bold text-slate-800 leading-tight">{user.firstName} {user.lastName?.toUpperCase() || ''}</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <img src="/assets/logo-eroz.png" alt="Logo" className="w-10 h-10 object-contain" />
+                                            <span className="font-bold text-xl text-slate-800">Éroz</span>
+                                        </>
+                                    )}
+                                </div>
                                 <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-lg hover:bg-slate-100 transition-colors"><X className="w-5 h-5 text-slate-500" /></button>
                             </div>
                             <div className="flex-1 py-6 flex flex-col justify-between">
@@ -250,7 +270,6 @@ const PresentationPage = () => {
                         </svg>
                     </motion.div>
                     <motion.div style={{ y: s1LogoY, opacity: s1Opac, scale: s1Scale, filter: s1Blur }} className="relative z-30 text-center px-4">
-                        <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="mb-6"><span className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-accent-300 text-sm font-medium border border-white/20">Plateforme pédagogique innovante</span></motion.div>
                         <motion.h1 variants={fadeInUp} initial="hidden" animate="visible" className="text-7xl md:text-9xl font-black text-white mb-6 tracking-tight drop-shadow-2xl">Éroz</motion.h1>
                         <motion.p variants={fadeInUp} initial="hidden" animate="visible" className="text-xl md:text-2xl text-slate-300 mb-12 font-medium">L'avenir de l'imagerie médicale <span className="text-accent-400">propulsé par l'IA.</span></motion.p>
                         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
