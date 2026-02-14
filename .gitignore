@@ -140,3 +140,21 @@ vite.config.ts.timestamp-*
 
 # Backend env
 backend/.env
+backend/.venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.coverage
+htmlcov/
+venv/
+env/
+.python-version
+
+# Backend runtime data
+backend/uploads/

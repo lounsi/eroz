@@ -1,29 +1,38 @@
-# eroz
-PFE - Éroz est une plateforme pédagogique interactive permettant aux étudiants de s’entraîner à l’analyse d’images médicales grâce à une interface moderne et un système de scoring assisté par intelligence artificielle.
+﻿# eroz
+Eroz is an interactive medical-imaging training platform. The frontend is React/Vite and the backend is now FastAPI (Python) with Postgres.
 
-## Installation et Lancement
+## Quick Start (Docker)
+```bash
+# create .env at project root
+JWT_SECRET=dev_secret
+GROQ_API_KEY=
 
-Le projet est composé d'un frontend (React/Vite) et d'un backend (Node/Express). Il faut lancer les deux pour que l'application fonctionne correctement.
+# run
+docker compose up --build
+```
 
-### 1. Backend (Serveur & Base de données)
-Ouvrez un terminal et exécutez :
+- Frontend: http://localhost
+- Backend: http://localhost:3000
+
+## Local Development
+Backend:
 ```bash
 cd backend
-npm install
-npx prisma migrate dev  # Pour initialiser la base de données
-node seed.js            # (Optionnel) Pour créer l'utilisateur Admin par défaut
-npm run dev
+python -m venv .venv
+# activate venv (Windows)
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+# set DATABASE_URL in backend/.env or env vars
+uvicorn app.main:app --reload --port 3000
 ```
-Le serveur démarrera sur `http://localhost:3000`.
 
-### 2. Frontend (Interface Utilisateur)
-Ouvrez un **deuxième terminal** (à la racine du projet) et exécutez :
+Frontend:
 ```bash
 npm install
 npm run dev
 ```
-L'application sera accessible sur `http://localhost:5173`.
 
-## Comptes de test
-- **Admin**: `admin@eroz.com` / `admin123`
-- **Étudiant**: Créez un compte via la page d'inscription.
+## Test Accounts (auto-seeded)
+- Admin: admin@eroz.com / admin123
+- Student: thomas.martin@edu.fr / student123
+- Professor: prof@eroz.com / prof123

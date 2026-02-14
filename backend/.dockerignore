@@ -1,0 +1,15 @@
+﻿__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+.env
+.venv
+node_modules
+package.json
+package-lock.json
+middleware
+prisma
+routes
+server.js
+uploads

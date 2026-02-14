@@ -38,6 +38,5 @@ services:
       - backend
     ports:
       - "80:80"
-
 volumes:
   postgres_data:

@@ -1,69 +1,66 @@
-# 🚀 GUIDE DE LANCEMENT DU PROJET ÉROZ
+﻿# Launch Guide - Eroz
 
-Ce fichier vous explique comment lancer le projet complet (Backend + Frontend) sur votre machine locale.
+This guide shows how to run the full project (Backend + Frontend).
 
-## 📋 Prérequis
-- Avoir **Node.js** installé sur votre machine.
-
----
-
-## 1️⃣ Lancer le Backend (Serveur)
-
-1. Ouvrez un terminal.
-2. Déplacez-vous dans le dossier `backend` :
-   ```bash
-   cd backend
-   ```
-3. Installez les dépendances (si ce n'est pas déjà fait) :
-   ```bash
-   npm install
-   ```
-4. Lancez le serveur :
-   ```bash
-   npm run dev
-   ```
-
-   > Le serveur démarrera sur **http://localhost:3000**
+## Prerequisites
+- Node.js (for frontend)
+- Python 3.11+ (for backend)
+- Postgres (or Docker)
 
 ---
 
-## 2️⃣ Lancer le Frontend (Site Web)
+## 1) Docker (Recommended)
+1. Create a `.env` file at the project root (same folder as `docker-compose.yml`):
+   ```bash
+   JWT_SECRET=dev_secret
+   GROQ_API_KEY=
+   ```
+2. Run:
+   ```bash
+   docker compose up --build
+   ```
 
-1. Ouvrez un **nouveau** terminal (gardez le premier ouvert).
-2. Assurez-vous d'être à la racine du projet (`eroz`).
-3. Installez les dépendances (si ce n'est pas déjà fait) :
-   ```bash
-   npm install
-   ```
-4. Lancez le site :
-   ```bash
-   npm run dev
-   ```
-   > Le site sera accessible sur **http://localhost:5173**
+- Frontend: http://localhost
+- Backend: http://localhost:3000
 
 ---
 
-## 🔑 Comptes de Test
-
-### Administrateur
-- **Email** : `admin@eroz.com`
-- **Mot de passe** : `admin123`
-
-### Étudiant (avec données de progression)
-- **Email** : `thomas.martin@edu.fr`
-- **Mot de passe** : `student123`
-
-### Professeur
-- **Email** : `prof@eroz.com`
-- **Mot de passe** : `prof123`
-
----
-
-## 🔄 Recréer les Données de Test
-
-Si vous voulez réinitialiser la base de données avec les données de test :
+## 2) Backend (FastAPI)
 ```bash
 cd backend
-npx prisma migrate reset --force
-npm run seed
+python -m venv .venv
 ```
+
+Activate the venv:
+- Windows (PowerShell):
+  ```bash
+  .\.venv\Scripts\Activate.ps1
+  ```
+- macOS/Linux:
+  ```bash
+  source .venv/bin/activate
+  ```
+
+Install and run:
+```bash
+pip install -r requirements.txt
+# ensure DATABASE_URL is set in your environment or in backend/.env
+uvicorn app.main:app --reload --port 3000
+```
+
+---
+
+## 3) Frontend (Vite)
+```bash
+npm install
+npm run dev
+```
+
+Frontend: http://localhost:5173
+
+---
+
+## Test Accounts (auto-seeded)
+- Admin: admin@eroz.com / admin123
+- Student: thomas.martin@edu.fr / student123
+- Professor: prof@eroz.com / prof123

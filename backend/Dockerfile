@@ -1,18 +1,19 @@
-FROM node:20
+﻿FROM python:3.11-slim
 
 WORKDIR /app
 
-# Installer client PostgreSQL pour pg_isready
-RUN apt-get update && apt-get install -y postgresql-client
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-COPY package*.json ./
-RUN npm install
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN npx prisma generate
+COPY app ./app
 
 EXPOSE 3000
 
-CMD sh -c "until pg_isready -h db -p 5432; do echo 'Waiting for database...'; sleep 2; done && npx prisma migrate deploy && node prisma/seed.js && npm start"
-
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3000"]
