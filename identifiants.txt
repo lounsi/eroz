@@ -1,0 +1,21 @@
+====================================
+   IDENTIFIANTS EROZ - Comptes de test
+====================================
+
+--- ADMIN ---
+Email : admin@eroz.com
+Mot de passe : admin123
+
+--- PROFESSEURS ---
+1) Laurent Becker
+   Email : l.becker@eroz.com
+   Mot de passe : prof123
+
+2) Sophie Mercier
+   Email : s.mercier@eroz.com
+   Mot de passe : prof123
+
+--- ÉTUDIANT ---
+1) Lucas Martin
+   Email : l.martin@eroz.com
+   Mot de passe : student123
