@@ -1,0 +1,37 @@
+# Fichiers générés par l'entraînement / inférence
+outputs/
+outputs_test/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environnement virtuel
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Données (trop volumineuses pour git)
+BraTS2020_TrainingData/
+BraTS2020_ValidationData/
+data_preprocessed/
+
+# Jupyter
+.ipynb_checkpoints/
