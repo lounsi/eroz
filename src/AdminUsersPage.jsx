@@ -9,6 +9,7 @@ const AdminUsersPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [actionError, setActionError] = useState('');
 
     // Debounce search input
     useEffect(() => {
@@ -36,23 +37,25 @@ const AdminUsersPage = () => {
     };
 
     const handleRoleChange = async (userId, newRole) => {
+        setActionError('');
         try {
             await client.put(`/users/${userId}/role`, { role: newRole });
             setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
         } catch (error) {
             console.error('Failed to update role', error);
-            alert('Failed to update role');
+            setActionError("Erreur lors de la mise à jour du rôle");
         }
     };
 
     const handleDeleteUser = async (userId) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible et supprimera toutes ses données.')) {
+            setActionError('');
             try {
                 await client.delete(`/users/${userId}`);
                 setUsers(users.filter(u => u.id !== userId));
             } catch (error) {
                 console.error('Failed to delete user', error);
-                alert('Erreur lors de la suppression de l\'utilisateur');
+                setActionError("Erreur lors de la suppression de l'utilisateur");
             }
         }
     };
@@ -91,6 +94,12 @@ const AdminUsersPage = () => {
                         </div>
                     </div>
                 </header>
+
+                {actionError && (
+                    <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                        {actionError}
+                    </div>
+                )}
 
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div className="overflow-x-auto">

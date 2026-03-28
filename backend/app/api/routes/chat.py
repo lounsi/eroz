@@ -1,8 +1,9 @@
 ﻿from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
 import logging
-from sqlalchemy.orm import Session
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import get_current_user
 from app.core.config import settings
@@ -26,8 +27,13 @@ def chat(
             message="Le chatbot n'est pas configure. Ajoute GROQ_API_KEY dans le fichier .env et redemarre les conteneurs."
         )
 
-    user = db.get(User, current_user.id)
-    stats = db.query(UserStats).filter(UserStats.userId == current_user.id).first()
+    user = (
+        db.query(User)
+        .options(joinedload(User.stats))
+        .filter(User.id == current_user.id)
+        .first()
+    )
+    stats = user.stats if user else None
     sessions = (
         db.query(TrainingSession)
         .filter(TrainingSession.userId == current_user.id)

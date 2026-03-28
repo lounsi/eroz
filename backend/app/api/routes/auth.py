@@ -1,7 +1,6 @@
 ﻿from __future__ import annotations
 
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -17,9 +16,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.email == payload.email).first()
     if existing:
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"message": "User already exists"},
+            detail="User already exists",
         )
 
     user = User(
@@ -53,9 +52,9 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email).first()
     if not user or not verify_password(payload.password, user.password):
-        return JSONResponse(
+        raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"message": "Invalid email or password"},
+            detail="Invalid email or password",
         )
 
     token = create_access_token({"id": user.id, "role": user.role})

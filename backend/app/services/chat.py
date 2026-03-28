@@ -2,10 +2,17 @@
 
 from typing import Iterable
 
+from functools import lru_cache
+
 from groq import Groq
 
 from app.core.config import settings
 from app.models import TrainingSession, User, UserStats
+
+
+@lru_cache(maxsize=1)
+def _get_groq_client() -> Groq:
+    return Groq(api_key=settings.groq_api_key)
 
 
 def generate_chat_response(
@@ -15,7 +22,7 @@ def generate_chat_response(
     stats: UserStats | None,
     sessions: Iterable[TrainingSession],
 ) -> str:
-    client = Groq(api_key=settings.groq_api_key)
+    client = _get_groq_client()
 
     user_name = f"{user.firstName} {user.lastName}" if user else "Etudiant"
     user_level = stats.level if stats else 1
@@ -74,7 +81,7 @@ Si la question sort du cadre medical ou de la plateforme, decline poliment en ra
             *trimmed_messages,
         ],
         temperature=0.7,
-        max_tokens=500,
+        max_tokens=settings.chat_max_tokens,
     )
 
     content = completion.choices[0].message.content if completion.choices else None

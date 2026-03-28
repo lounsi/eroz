@@ -151,10 +151,20 @@ const fetchPubMed = async (queries) => {
     } catch { return []; }
 };
 
+// Simple module-level cache with a 5-minute TTL to avoid redundant fetches
+// when the user navigates away and back to the MedicalWatch page.
+const CACHE_TTL_MS = 5 * 60 * 1000;
+let _cache = null;
+let _cacheTimestamp = 0;
+
 /**
  * CHARGEMENT PRINCIPAL : Zéro échec garanti
  */
 export const fetchAllMedicalNews = async () => {
+    const now = Date.now();
+    if (_cache && (now - _cacheTimestamp) < CACHE_TTL_MS) {
+        return _cache;
+    }
     console.log('[MedWatch v5.1] Refining selection logic...');
     const results = {};
     const usedTitles = new Set();
@@ -215,6 +225,8 @@ export const fetchAllMedicalNews = async () => {
         console.log(`[MedWatch] ${config.name} : ${selectedArticles.length} items (${enCount} EN).`);
     }
 
+    _cache = results;
+    _cacheTimestamp = Date.now();
     return results;
 };
 
@@ -226,4 +238,4 @@ export const searchArticles = (news, term) => {
     Object.values(news).forEach(c => c.articles.forEach(a => { if (a.title.toLowerCase().includes(t)) r.push({ ...a, categoryInfo: { name: c.name, gradient: c.gradient, icon: c.icon } }); }));
     return r;
 };
-export const formatRelativeDate = (d) => { try { const diff = Math.floor(Math.abs(new Date() - new Date(d)) / 86400000); return diff === 0 ? "Aujourd'hui" : diff === 1 ? "Hier" : `Il y a ${diff} jours`; } catch { return d; } };
+export { formatRelativeDate } from '../utils/dateUtils';

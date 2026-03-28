@@ -1,10 +1,11 @@
 ﻿from __future__ import annotations
 
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.security import hash_password
 from app.models import TrainingSession, User, UserStats
 
@@ -16,7 +17,7 @@ DIFFICULTIES = {
 
 
 def calculate_level(total_xp: int) -> int:
-    return (total_xp // 1000) + 1
+    return (total_xp // settings.xp_per_level) + 1
 
 
 def calculate_streak(dates: list[datetime]) -> int:
@@ -40,7 +41,7 @@ def create_sessions_and_stats(
     user_name: str,
 ):
     sessions: list[TrainingSession] = []
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     total_xp = 0
 
     for i in range(session_count):

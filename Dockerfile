@@ -43,8 +43,8 @@ RUN echo 'server { \
     gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; \
     gzip_min_length 1000; \
     \
-    # Taille max upload \
-    client_max_body_size 10M; \
+    # Taille max upload (NIfTI files can exceed 50 MB each) \
+    client_max_body_size 250M; \
     \
     # Cache des assets statiques \
     location /assets/ { \
@@ -60,6 +60,8 @@ RUN echo 'server { \
     proxy_set_header Connection 'upgrade'; \
     proxy_set_header Host $host; \
     proxy_cache_bypass $http_upgrade; \
+    proxy_read_timeout 300s; \
+    proxy_send_timeout 300s; \
     } \
     \
     # Proxy Uploads (Images) vers le Backend \

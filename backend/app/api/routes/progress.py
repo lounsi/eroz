@@ -1,11 +1,12 @@
 ﻿from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
+from app.core.config import settings
 from app.core.database import get_db
 from app.models import TrainingSession, User, UserStats
 from app.schemas.progress import TrainingSessionResponse, UserStatsResponse, XpProgressResponse
@@ -48,24 +49,23 @@ def weekly_activity(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     week_ago = now - timedelta(days=7)
 
-    sessions = (
-        db.query(TrainingSession)
+    # Fetch only the completedAt column to reduce data transfer
+    dates = (
+        db.query(TrainingSession.completedAt)
         .filter(TrainingSession.userId == current_user.id)
         .filter(TrainingSession.completedAt >= week_ago)
-        .order_by(TrainingSession.completedAt.asc())
         .all()
     )
 
     activity = {"Lun": 0, "Mar": 0, "Mer": 0, "Jeu": 0, "Ven": 0, "Sam": 0, "Dim": 0}
     day_names = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
 
-    for session in sessions:
-        node_index = (session.completedAt.weekday() + 1) % 7
-        day_name = day_names[node_index]
-        activity[day_name] += 1
+    for (completed_at,) in dates:
+        day_index = (completed_at.weekday() + 1) % 7
+        activity[day_names[day_index]] += 1
 
     return activity
 
@@ -80,12 +80,12 @@ def xp_progress(
         return XpProgressResponse(
             level=1,
             currentXp=0,
-            xpForNextLevel=1000,
+            xpForNextLevel=settings.xp_per_level,
             progress=0,
             totalXp=None,
         )
 
-    xp_per_level = 1000
+    xp_per_level = settings.xp_per_level
     current_level_xp = stats.totalXp % xp_per_level
     progress = round((current_level_xp / xp_per_level) * 100)
 

@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     groq_api_key: str | None = Field(None, alias="GROQ_API_KEY")
     upload_dir: str = Field("uploads", alias="UPLOAD_DIR")
     max_upload_mb: int = Field(5, alias="MAX_UPLOAD_MB")
+    xp_per_level: int = Field(1000, alias="XP_PER_LEVEL")
+    chat_max_tokens: int = Field(500, alias="CHAT_MAX_TOKENS")
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 

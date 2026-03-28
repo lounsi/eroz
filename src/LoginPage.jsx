@@ -12,6 +12,14 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        if (!email.includes('@')) {
+            setError('Adresse email invalide');
+            return;
+        }
+        if (password.length < 8) {
+            setError('Le mot de passe doit contenir au moins 8 caractères');
+            return;
+        }
         const result = await login(email, password);
         if (!result.success) {
             setError(result.message);

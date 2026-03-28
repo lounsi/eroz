@@ -10,9 +10,17 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
+# Install CPU-only torch first to avoid pulling the 2GB+ CUDA wheel from PyPI
+RUN pip install --no-cache-dir \
+    torch==2.2.2+cpu \
+    torchvision==0.17.2+cpu \
+    --index-url https://download.pytorch.org/whl/cpu
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
+COPY alembic ./alembic
+COPY alembic.ini ./alembic.ini
+COPY services ./services
 
 EXPOSE 3000
 

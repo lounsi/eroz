@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+import logging
 import time
 from pathlib import Path
 
@@ -11,9 +12,11 @@ from sqlalchemy import text
 
 from app.api.router import api_router
 from app.core.config import settings
-from app.core.database import Base, SessionLocal, engine
+from app.core.database import SessionLocal, engine
 from app.services.seed import seed_if_needed
 import app.models  # noqa: F401
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title=settings.app_name)
 
@@ -38,7 +41,29 @@ def on_startup():
     else:
         raise RuntimeError("Database not ready")
 
-    Base.metadata.create_all(bind=engine)
+    # Check if migrations are up-to-date (warn only; run `alembic upgrade head` manually)
+    try:
+        from alembic.runtime.migration import MigrationContext
+        from alembic.script import ScriptDirectory
+        from alembic.config import Config as AlembicConfig
+        from pathlib import Path as _Path
+
+        alembic_cfg = AlembicConfig(str(_Path(__file__).resolve().parents[2] / "alembic.ini"))
+        script = ScriptDirectory.from_config(alembic_cfg)
+        with engine.connect() as conn:
+            migration_ctx = MigrationContext.configure(conn)
+            current_heads = set(migration_ctx.get_current_heads())
+            latest_heads = set(script.get_heads())
+            if current_heads != latest_heads:
+                logger.warning(
+                    "Database is not up-to-date. Run `alembic upgrade head` to apply pending migrations. "
+                    "Current: %s, Latest: %s",
+                    current_heads,
+                    latest_heads,
+                )
+    except Exception as exc:
+        logger.warning("Could not check migration status: %s", exc)
+
     db = SessionLocal()
     try:
         seed_if_needed(db)

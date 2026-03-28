@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { formatDuration, formatSessionDate } from './utils/dateUtils'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -25,6 +26,7 @@ const DashboardPage = () => {
     const [weeklyActivity, setWeeklyActivity] = useState({})
     const [xpProgress, setXpProgress] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [avatarError, setAvatarError] = useState('')
     const fileInputRef = useRef(null)
 
     useEffect(() => {
@@ -61,14 +63,14 @@ const DashboardPage = () => {
         formData.append('avatar', file)
 
         try {
+            setAvatarError('')
             const { data } = await client.post('/upload/avatar', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
-            // Mettre à jour l'utilisateur localement
             updateUser({ avatar: data.avatar })
         } catch (error) {
             console.error('Failed to upload avatar:', error)
-            alert('Erreur lors de l\'upload de l\'image')
+            setAvatarError("Erreur lors de l'upload de l'image")
         }
     }
 
@@ -81,25 +83,9 @@ const DashboardPage = () => {
     const displayStats = stats ? [
         { label: "Séries jouées", value: stats.totalSessions.toString(), icon: Brain, color: "text-medical-600", bg: "bg-medical-50" },
         { label: "Précision moy.", value: `${Math.round(stats.averageScore)}%`, icon: Target, color: "text-accent-600", bg: "bg-accent-50" },
-        { label: "Temps moy.", value: formatTime(stats.averageTime), icon: Clock, color: "text-orange-500", bg: "bg-orange-50" },
+        { label: "Temps moy.", value: formatDuration(stats.averageTime), icon: Clock, color: "text-orange-500", bg: "bg-orange-50" },
         { label: "Série actuelle", value: `${stats.currentStreak} jour${stats.currentStreak > 1 ? 's' : ''}`, icon: Activity, color: "text-green-500", bg: "bg-green-50" },
     ] : []
-
-    function formatTime(seconds) {
-        if (!seconds) return '0m'
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
-        return mins > 0 ? `${mins}m${secs > 0 ? secs : ''}` : `${secs}s`
-    }
-
-    function formatSessionDate(dateString) {
-        const date = new Date(dateString)
-        const now = new Date()
-        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24))
-        if (diffDays === 0) return `Aujourd'hui, ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
-        if (diffDays === 1) return `Hier, ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
-        return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-    }
 
     function getDifficultyInfo(difficulty) {
         switch (difficulty) {
@@ -188,6 +174,9 @@ const DashboardPage = () => {
                         </div>
 
                         <div className="text-center md:text-left flex-1">
+                            {avatarError && (
+                                <p className="text-red-600 text-xs mb-2">{avatarError}</p>
+                            )}
                             <h1 className="text-3xl font-bold text-slate-800">{fullName}</h1>
                             <p className="text-slate-500 font-medium mb-3">
                                 {getLevelName(xpProgress?.level || 1)} • Niveau {xpProgress?.level || 1}

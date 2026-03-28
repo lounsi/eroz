@@ -1,17 +1,17 @@
 ﻿from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class RegisterRequest(BaseModel):
-    firstName: str
-    lastName: str
-    email: str
-    password: str
+    firstName: str = Field(..., min_length=1, max_length=100)
+    lastName: str = Field(..., min_length=1, max_length=100)
+    email: EmailStr
+    password: str = Field(..., min_length=8, max_length=128)
 
 
 class LoginRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 

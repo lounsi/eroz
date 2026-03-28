@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { formatDurationClock, formatHour } from './utils/dateUtils'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -62,16 +63,6 @@ const HistoryPage = () => {
             case 'HARD': return { label: 'Difficile', color: 'text-red-600', bg: 'bg-red-100', border: 'border-red-200' }
             default: return { label: difficulty, color: 'text-slate-600', bg: 'bg-slate-100', border: 'border-slate-200' }
         }
-    }
-
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
-        return `${mins}:${secs.toString().padStart(2, '0')}`
-    }
-
-    function formatHour(dateString) {
-        return new Date(dateString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
     }
 
     if (loading) {
@@ -173,7 +164,7 @@ const HistoryPage = () => {
                                                                 </span>
                                                                 <span className="flex items-center gap-1">
                                                                     <Clock className="w-3.5 h-3.5" />
-                                                                    {formatTime(session.duration)}
+                                                                    {formatDurationClock(session.duration)}
                                                                 </span>
                                                             </div>
                                                         </div>
