@@ -13,4 +13,4 @@ docker compose up --build
 
 ## Test Accounts (auto-seeded)
 - Admin: admin@eroz.com / admin123
-*to register, localhost/register*
+- *to register, localhost/register*
